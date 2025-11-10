@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVHRR Data Acquisition Interface | Performance Console</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Typography: Inter for general text, Roboto Mono for data and titles */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Roboto+Mono:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0D1321; /* Deep Velvet Blue/Navy */
+        }
+
+        /* Core Colors */
+        .poster-bg {
+            background-color: #0D1321;
+            color: #F3F4F6; 
+        }
+        .card-surface {
+            background-color: #1D2A3B; /* Lighter Velvet Blue Panel */
+            border: 1px solid #374151; 
+            /* Ambient lighting effect */
+            box-shadow: 0 0 20px rgba(13, 19, 33, 0.8), 0 0 10px rgba(255, 215, 0, 0.1); 
+            transition: all 0.4s ease-in-out;
+            border-radius: 0.5rem;
+        }
+        .card-surface:hover {
+            transform: scale(1.005);
+            border-color: #FFD700; 
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4); 
+        }
+
+        /* Accent Color: Neon Gold */
+        .accent-gold {
+            color: #FFD700; 
+        }
+        .border-gold {
+            border-color: #FFD700;
+        }
+        
+        /* Title Style: Monospace and sharp */
+        .title-style {
+            font-family: 'Roboto Mono', monospace;
+            letter-spacing: 0.1em;
+        }
+
+        /* Signature Style */
+        .signature-style {
+            /* Using generic 'cursive' for robustness, relying on system font */
+            font-family: cursive; 
+            font-weight: 400;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+        }
+
+        /* Header Styling: Angular/Aggressive */
+        .header-bg {
+            background-color: #1D2A3B;
+            border-bottom: 5px solid #FFD700; 
+        }
+
+        /* Interactive Section Styling */
+        .section-title-bar {
+            cursor: pointer;
+            padding: 1rem 1.5rem;
+            border-left: 5px solid transparent;
+            transition: background-color 0.2s, border-left 0.2s;
+        }
+        .section-title-bar:hover, .section-title-bar.active {
+            background-color: #2D3A4B;
+            border-left: 5px solid #FFD700; 
+        }
+        
+        /* Collapsible Animation */
+        .collapsible-content {
+            overflow: hidden;
+            transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 0;
+            background-color: #151F2E; 
+        }
+        .collapsible-content.open {
+            /* Adjusted max-height for large content blocks in desktop view */
+            max-height: 500px; 
+            padding: 1rem 1.5rem 1.5rem 1.5rem; 
+        }
+        .arrow-icon {
+            transition: transform 0.3s ease;
+        }
+        .arrow-icon.rotated {
+            transform: rotate(180deg);
+        }
+
+        /* Data Readout Style - Sharp box */
+        .data-point {
+            font-family: 'Roboto Mono', monospace;
+            border: 2px solid #FFD700;
+            color: #FFD700;
+            padding: 0.5rem 0.75rem;
+            display: inline-block;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+            border-radius: 0.25rem;
+        }
+        
+        /* Custom Icon Styling */
+        .icon-svg {
+            stroke: #FFD700;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        /* Responsive adjustments for complex layout */
+        @media (max-width: 1024px) {
+            /* Ensure mobile readability by collapsing the grid */
+            .lg\:grid-cols-4 {
+                grid-template-columns: 1fr;
+            }
+            .lg\:col-span-3, .lg\:col-span-1 {
+                grid-column: span 1 / span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app" class="max-w-7xl mx-auto my-8 poster-bg">
+        
+        <!-- Header - Main System Title -->
+        <header class="header-bg p-8 md:p-12 mb-8 text-center rounded-lg shadow-2xl shadow-blue-900/50 mx-4 md:mx-0">
+            <h1 class="text-5xl md:text-7xl font-black tracking-widest text-white uppercase title-style">
+                A V H R R
+            </h1>
+            <p class="text-lg md:text-3xl font-light accent-gold mt-2 tracking-widest title-style">
+                HIGH-PERFORMANCE SENSOR CONSOLE
+            </p>
+        </header>
+
+        <!-- Main Dashboard Panel - DESKTOP FORMATION -->
+        <section class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-10 px-4 md:px-0">
+            
+            <!-- COLUMN 1 (3/4 Width) - CORE DATA AND INTERACTIVE FUNCTION -->
+            <div class="lg:col-span-3 space-y-6">
+
+                <!-- Row 1: Core Specifications and Unit -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Measured Value (Span 2) -->
+                    <div class="md:col-span-2 p-6 card-surface">
+                        <p class="font-bold text-gray-400 text-sm mb-2 title-style">PRIMARY CAPTURE VARIABLE</p>
+                        <h3 class="text-3xl font-bold text-white mb-2 flex items-center">
+                            <svg class="icon-svg w-8 h-8 mr-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 10V3L4 14H11L11 21L20 10L13 10Z"/></svg>
+                            Radiant Energy
+                        </h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">The **AVHRR** captures energy across 5 to 6 discrete spectral channels, spanning from visible light to thermal infrared. This multi-spectral capability allows for detailed monitoring of the Earth's surface.</p>
+                    </div>
+                    
+                    <!-- Unit Used -->
+                    <div class="md:col-span-1 p-6 card-surface bg-[#151F2E]">
+                        <p class="font-bold accent-gold text-sm mb-2 title-style">RAW DATA UNIT</p>
+                        <div class="data-point text-xl font-bold">
+                            Radiance
+                        </div>
+                        <p class="text-gray-500 text-xs mt-3">The measure of power of light energy directed at the sensor.</p>
+                        <p class="text-gray-500 text-xs mt-1">Derived: SST (°C), NDVI</p>
+                    </div>
+                </div>
+
+                <!-- Row 2: Interactive Modules (Operation & Importance) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Acquisition Protocol (How it Works) -->
+                    <div class="rounded-xl overflow-hidden card-surface">
+                        <div class="section-title-bar flex justify-between items-center" 
+                             onclick="toggleSection('how-it-works-content', 'how-it-works-arrow')">
+                            <h3 class="text-xl font-extrabold text-white uppercase title-style flex items-center">
+                                <svg class="icon-svg w-6 h-6 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/></svg>
+                                ACQUISITION METHODOLOGY
+                            </h3>
+                            <svg id="how-it-works-arrow" class="arrow-icon w-6 h-6 accent-gold" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div id="how-it-works-content" class="collapsible-content">
+                            <p class="text-gray-400 leading-relaxed mb-4 text-sm">
+                                The sensor utilizes a **rotating mirror** that sweeps perpendicular to the satellite's flight path (cross-track scanning). This mechanical action is what allows it to capture a massive field of view.
+                            </p>
+                            <ul class="list-disc list-inside mt-4 space-y-2 text-gray-400 ml-4 text-sm">
+                                <li>The sweeping action results in a vast **2,400 km** wide path.</li>
+                                <li>It collects data continuously, ensuring near-global coverage twice every 24-hour cycle.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Mission Critical Role (Importance) -->
+                    <div class="rounded-xl overflow-hidden card-surface">
+                        <div class="section-title-bar flex justify-between items-center" 
+                             onclick="toggleSection('importance-content', 'importance-arrow')">
+                            <h3 class="text-xl font-extrabold text-white uppercase title-style flex items-center">
+                                <svg class="icon-svg w-6 h-6 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"/><path d="M14.5 8.5L9.5 15.5"/></svg>
+                                FORECAST INTEGRATION
+                            </h3>
+                            <svg id="importance-arrow" class="arrow-icon w-6 h-6 accent-gold" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div id="importance-content" class="collapsible-content">
+                            <p class="text-gray-400 leading-relaxed mb-4 text-sm">
+                                The data is mission-critical for initializing and verifying the accuracy of modern **Numerical Weather Prediction (NWP)** models globally.
+                            </p>
+                            <ul class="list-disc list-inside mt-4 space-y-2 text-gray-400 ml-4 text-sm">
+                                <li>**Climate Modeling:** Provides crucial Sea Surface Temperature (SST) used for long-term predictions and storm intensity forecasts.</li>
+                                <li>**Real-Time Input:** Continuous data feeds on snow/ice cover are directly assimilated by computer models to ensure high forecast integrity.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- COLUMN 2 (1/4 Width) - VISUALS AND STATUS METRICS -->
+            <div class="lg:col-span-1 p-6 card-surface rounded-xl flex flex-col justify-start space-y-6">
+                
+                <h2 class="text-xl font-bold accent-gold mb-2 border-b border-gray-700 pb-2 uppercase title-style">VISUAL HARDWARE PROFILE</h2>
+                
+                <!-- Image Placeholder (Enhanced with Thematic Text) -->
+                <div class="flex justify-center items-center h-56 bg-[#0D1321] border border-gold/50 rounded-md p-4 mb-4">
+                    <!-- SVG of a simple satellite icon/dish to represent the hardware -->
+                    <svg class="w-full h-full opacity-90" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path class="icon-svg" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" fill="#1D2A3B"/>
+                        <path class="icon-svg" d="M18.364 5.63604L14.8284 9.17158M9.17158 14.8284L5.63604 18.364" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path class="icon-svg" d="M12 12L12 2M12 12L22 12" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path class="icon-svg" d="M18 12C18 15.3137 15.3137 18 12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+
+                <!-- Status Panel -->
+                <div class="pt-4 border-t border-gray-700 space-y-4">
+                    <p class="text-xs font-bold text-gray-300 title-style">CURRENT DEPLOYMENT STATUS:</p>
+                    <p class="data-point text-base font-medium">NOMINAL - POLAR ORBIT</p>
+                    
+                    <p class="text-xs font-bold text-gray-300 title-style mt-4">SCAN WIDTH REPORT:</p>
+                    <p class="data-point text-base font-medium">~2400 KM</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Application Logs & History - FOOTER PANEL -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 p-8 card-surface rounded-xl mx-4 md:mx-0">
+            <h3 class="md:col-span-3 text-3xl font-extrabold accent-gold mb-6 text-center uppercase tracking-widest title-style border-b border-gray-700 pb-4">AUXILIARY & HISTORICAL LOGS</h3>
+
+            <!-- Real-Life Use -->
+            <div class="p-4 border-l-4 border-gold bg-[#151F2E] rounded-md">
+                <h4 class="text-xl font-bold text-white mb-3 title-style flex items-center">
+                    <svg class="icon-svg w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 10C21 15 12 22 12 22C12 22 3 15 3 10C3 5.58172 6.58172 2 11 2C15.4183 2 19 5.58172 19 10Z"/></svg>
+                    UTILITY: FIRE TRACKING
+                </h4>
+                <p class="text-gray-400 leading-relaxed text-sm">
+                    Thermal data allows teams to locate the exact heat signatures of large wildfires. This is critical for tracking fire boundaries and planning containment during low-visibility periods.
+                </p>
+            </div>
+
+            <!-- Historical Note -->
+            <div class="p-4 border-l-4 border-gold bg-[#151F2E] rounded-md">
+                <h4 class="text-xl font-bold text-white mb-3 title-style flex items-center">
+                    <svg class="icon-svg w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 8V12L15 15"/><circle cx="12" cy="12" r="10"/></svg>
+                    FIRST DEPLOYMENT
+                </h4>
+                <p class="text-gray-400 leading-relaxed text-sm">
+                    The first **AVHRR** unit launched successfully in **1979** aboard the NOAA-6 satellite, creating a continuous, multi-decade environmental monitoring record.
+                </p>
+            </div>
+            
+            <!-- Fun Facts -->
+            <div class="p-4 border-l-4 border-gold bg-[#151F2E] rounded-md">
+                <h4 class="text-xl font-bold text-white mb-3 title-style flex items-center">
+                    <svg class="icon-svg w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.5 10H7L10.5 4L13.5 10ZM10.5 14H17L13.5 20L10.5 14Z"/></svg>
+                    ANOMALY LOGS
+                </h4>
+                <div class="space-y-3 text-gray-400 text-sm">
+                    <p class="accent-gold font-bold">01: EXCEEDED LIFESPAN</p>
+                    <p class="text-gray-500">Though rated for 2-3 years, many units have dramatically exceeded expectations, operating for over a decade in space.</p>
+                    <p class="accent-gold font-bold mt-3">02: NDVI GLOBAL STANDARD</p>
+                    <p class="text-gray-500">The sensor is the core instrument used to generate the global standard for assessing crop and planetary health (NDVI).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer - System Status Bar with Signature -->
+        <footer class="mt-8 p-6 border-t border-gray-800 text-center text-sm text-gray-600 bg-[#1D2A3B] rounded-b-xl mx-4 md:mx-0">
+            <!-- Signature Block -->
+            <div class="mb-4 pt-2">
+                <p class="signature-style text-3xl accent-gold">JA'VYON BROWN</p>
+            </div>
+
+            <div class="w-1/4 mx-auto mb-4 border-t-2 border-gold"></div>
+            <p class="title-style text-xs">AVHRR CONSOLE V7.1 | DATA ACQUISITION ONLINE</p>
+        </footer>
+
+    </div>
+
+    <script>
+        /**
+         * Toggles the visibility and smooth-slide animation of a content section.
+         */
+        function toggleSection(contentId, arrowId) {
+            const content = document.getElementById(contentId);
+            const arrow = document.getElementById(arrowId);
+            const titleBar = arrow.closest('.section-title-bar');
+
+            if (content.classList.contains('open')) {
+                // Collapse the section
+                content.classList.remove('open');
+                arrow.classList.remove('rotated');
+                titleBar.classList.remove('active');
+            } else {
+                // Expand the section
+                // First, ensure all other sections are closed (Accordion behavior)
+                document.querySelectorAll('.collapsible-content.open').forEach(openContent => {
+                    if (openContent.id !== contentId) {
+                        openContent.classList.remove('open');
+                        const otherArrow = document.getElementById(openContent.id.replace('-content', '-arrow'));
+                        if (otherArrow) otherArrow.classList.remove('rotated');
+                        const otherTitleBar = openContent.previousElementSibling;
+                        if (otherTitleBar && otherTitleBar.classList.contains('section-title-bar')) otherTitleBar.classList.remove('active');
+                    }
+                });
+
+
+                // Expand the target section
+                content.classList.add('open');
+                arrow.classList.add('rotated');
+                titleBar.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
+
